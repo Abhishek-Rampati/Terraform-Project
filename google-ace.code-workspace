@@ -1,0 +1,14 @@
+{
+	"folders": [
+		{
+			"path": "../google-ace"
+		},
+		{
+			"path": "."
+		},
+		{
+			"path": "../aws_resources"
+		}
+	],
+	"settings": {}
+}
