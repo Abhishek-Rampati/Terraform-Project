@@ -7,10 +7,10 @@ terraform {
   }
 }
 
-provider "aws"{
+provider "aws" {
   # Configuration options
-  
-  region  = var.aws_region
+
+  region = var.aws_region
 
 }
 
@@ -29,7 +29,7 @@ resource "aws_vpc" "my-vpc" {
   cidr_block           = var.vpc_cidr_block
   enable_dns_hostnames = var.enable_dns_hostnames
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, { Name = "${local.naming_prefix}-vpc" })
 
 }
 
@@ -40,8 +40,8 @@ resource "aws_internet_gateway" "my-igw" {
 }
 
 resource "aws_subnet" "my-subnets" {
-  count = var.vpc_subnet_count
-  cidr_block              = var.vpc_subnets_cidr_block[count.index]
+  count                   = var.vpc_subnet_count
+  cidr_block              = cidrsubnet(var.vpc_cidr_block, 8, count.index)
   vpc_id                  = aws_vpc.my-vpc.id
   map_public_ip_on_launch = var.map_public_ip_on_launch
   availability_zone       = data.aws_availability_zones.available.names[count.index]
@@ -77,7 +77,7 @@ resource "aws_route_table" "my-rtb" {
 }
 
 resource "aws_route_table_association" "rta-subnets" {
-  count = var.vpc_subnet_count
+  count          = var.vpc_subnet_count
   subnet_id      = aws_subnet.my-subnets[count.index].id
   route_table_id = aws_route_table.my-rtb.id
 }
@@ -108,10 +108,9 @@ resource "aws_security_group" "ngnix-sg" {
     cidr_blocks = [var.vpc_cidr_block]
   }
 
-  tags = local.common_tags
+  tags = merge(local.common_tags, { Name = "${local.naming_prefix}-dev" })
 
 }
-
 ##  ALB SECURITY GROUP #
 
 resource "aws_security_group" "alb_sg" {

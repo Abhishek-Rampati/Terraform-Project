@@ -1,11 +1,14 @@
 resource "aws_instance" "Demoinstances" {
-  count = var.instance_count
-  ami           = "ami-051f7e7f6c2f40dc1"
-  instance_type = var.instance_type
-  subnet_id              = aws_subnet.my-subnets[count.index].id
+  count                  = var.instance_count
+  ami                    = "ami-051f7e7f6c2f40dc1"
+  instance_type          = var.instance_type
+  subnet_id              = aws_subnet.my-subnets[(count.index % var.vpc_subnet_count)].id
   vpc_security_group_ids = [aws_security_group.ngnix-sg.id]
-  iam_instance_profile = aws_iam_instance_profile.ngnix_profile.name
-  depends_on           = [aws_iam_role.s3_Access_role]
+  iam_instance_profile   = aws_iam_instance_profile.ngnix_profile.name
+  depends_on             = [aws_iam_role.s3_Access_role]
+  user_data = templatefile("${path.module}/startup_Script.tpl", {
+    s3_bucket_name = aws_s3_bucket.web_bucket.id
+  })
 
   tags = local.common_tags
 

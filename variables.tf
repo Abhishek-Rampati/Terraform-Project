@@ -42,10 +42,10 @@ variable "instance_type" {
 }
 
 variable "instance_count" {
-  type = number
+  type        = number
   description = "Number of instances to be created"
-  default = 2
-  
+  default     = 2
+
 }
 
 variable "vpc_cidr_block" {
@@ -55,10 +55,10 @@ variable "vpc_cidr_block" {
 
 }
 
-variable "vpc_subnet_count"{
+variable "vpc_subnet_count" {
   type        = number
   description = "number of subnets in a VPC"
-  default = 2
+  default     = 2
 }
 
 variable "vpc_subnets_cidr_block" {
@@ -86,4 +86,11 @@ variable "company_name" {
   type        = string
   description = "company name for resource tagging"
   default     = "Globomantics"
+}
+
+variable "naming_prefix" {
+  type        = string
+  description = "Naming prefix for all resources"
+  default     = "globoweb"
+
 }

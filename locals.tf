@@ -12,5 +12,7 @@ locals {
     project      = "${var.company_name}-${var.project}"
   }
 
-  s3_bucket_name = "global-web-app-${random_integer.rand.result}"
+  s3_bucket_name = lower("${local.naming_prefix}-${random_integer.rand.result}")
+
+  naming_prefix = "${var.naming_prefix}-dev"
 }

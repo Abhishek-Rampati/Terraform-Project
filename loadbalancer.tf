@@ -6,11 +6,11 @@ data "aws_elb_service_account" "root" {}
 
 ## aws_loadbalancer
 resource "aws_lb" "ngnix" {
-  name               = "Global-web-alb"
-  internal           = false
-  load_balancer_type = "application"
-  security_groups    = [aws_security_group.alb_sg.id]
-  subnets            = [aws_subnet.my-subnets[count.index].id]
+  name                       = "Global-web-alb"
+  internal                   = false
+  load_balancer_type         = "application"
+  security_groups            = [aws_security_group.alb_sg.id]
+  subnets                    = aws_subnet.my-subnets[*].id
   enable_deletion_protection = false
 
 
@@ -45,7 +45,7 @@ resource "aws_lb_listener" "ngnix" {
 ## aws_lb_listener_attachment
 
 resource "aws_lb_target_group_attachment" "ngnix" {
-  count = var.instance_count
+  count            = var.instance_count
   target_group_arn = aws_lb_target_group.ngnix_tg.arn
   target_id        = aws_instance.Demoinstances[count.index].id
   port             = 80

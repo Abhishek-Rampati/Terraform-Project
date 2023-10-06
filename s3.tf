@@ -1,7 +1,7 @@
 ## aws s3 bucket
 resource "aws_s3_bucket" "web_bucket" {
-  bucket        = local.s3_bucket_name
-  
+  bucket = local.s3_bucket_name
+
 
   tags = local.common_tags
 }
@@ -24,23 +24,19 @@ resource "aws_s3_bucket_acl" "my_bucket_acl" {
 }
 ## aws s3 bucket object
 
-resource "aws_s3_object" "object" {
+resource "aws_s3_object" "objects" {
+  for_each = {
+    website = "/website/index.html"
+    image   = "/website/beach.jpg"
+  }
   bucket = local.s3_bucket_name
-  key    = "/website/index.html"
-  source = "./website/index.html"
+  key    = each.value
+  source = ".${each.value}"
 
 
   tags = local.common_tags
 }
 
-resource "aws_s3_object" "image" {
-  bucket = local.s3_bucket_name
-  key    = "/website/beach.jpg"
-  source = "./website/beach.jpg"
-
-
-  tags = local.common_tags
-}
 ## aws iam role
 
 resource "aws_iam_role" "s3_Access_role" {
